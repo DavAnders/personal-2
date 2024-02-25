@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+        /* Add some basic styling */
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages li { padding: 8px; margin-bottom: 2px; background-color: #f3f3f3; }
+        #chat-input { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form id="chat-form">
+        <input id="chat-input" autocomplete="off" /><button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        // Form submission event to send a message
+        document.getElementById('chat-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevents the form from submitting in the traditional way
+            var input = document.getElementById('chat-input');
+            socket.emit('chat message', input.value);
+            input.value = ''; // Clear the input after sending
+        });
+
+        // Listen for chat messages from the server
+        socket.on('chat message', function(msg) {
+            var item = document.createElement('li');
+            item.textContent = msg;
+            document.getElementById('messages').appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight); // Scroll to the bottom
+        });
+    </script>
+</body>
+</html>
